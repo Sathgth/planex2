@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlaneX</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+   * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      display: flex;
+      height: 100vh;
+      background: linear-gradient(to bottom, #0a0f24, #0c1e3c);
+      color: #fff;
+      overflow: hidden;
+      flex-direction: row;
+      transition: background-image 0.5s ease-in-out;
+    }
+    .sidebar {
+      width: 70px;
+      background-color: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      padding: 20px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: width 0.3s ease;
+      overflow-x: auto;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar.expanded {
+      width: 220px;
+    }
+    .sidebar i {
+      margin: 20px 0;
+      font-size: 22px;
+      cursor: pointer;
+      color: #ffffffcc;
+      transition: color 0.3s;
+    }
+    .sidebar i:hover {
+      color: #ffffff;
+    }
+    .sidebar .label {
+      display: none;
+      margin-left: 12px;
+      font-size: 14px;
+    }
+    .sidebar.expanded .label {
+      display: inline;
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      position: relative;
+    }
+    .floating-bar {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  padding: 10px 25px;
+  border-radius: 25px;
+  z-index: 1000;
+  justify-content: space-between;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+}
+
+
+.floating-bar #greeting {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+  display: inline-block;
+}
+
+
+    .floating-bar button {
+      margin-left: 15px;
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      border-radius: 20px;
+      padding: 5px 12px;
+      color: white;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+    .floating-bar button:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+
+
+
+    .login-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-circle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.login-circle i {
+  color: white;
+  font-size: 16px;
+}
+
+
+.emoji-circle {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, background 0.3s ease;
+}
+
+/* Ajusta o tamanho do emoji dentro do círculo */
+.emoji-circle img {
+  width: 32px;
+  height: 32px;
+  animation: pulse 1.5s infinite;
+}
+
+
+.emoji-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+ 
+
+}
+
+
+.emoji-circle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+
+
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.85; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+
+
+
+
+
+
+
+
+ /* Fonte moderna (Inter) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+.emoji-overlay,
+.modal-overlay,
+.theme-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+}
+
+.emoji-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: 0.5px;
+  animation: fadeInUp 0.4s ease both;
+}
+
+.emoji-box {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 15px 20px;
+  border-radius: 20px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  box-shadow: 0 0 15px #ffffff4d;
+  max-width: 90%;
+}
+
+.emoji-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.3s, border 0.3s;
+  padding: 10px;
+  border-radius: 12px;
+  animation: fadeInUp 0.6s ease both;
+  min-width: 60px;
+}
+
+.emoji-item img {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 8px;
+}
+
+.emoji-item p {
+  font-size: 14px;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.emoji-item:hover {
+  transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.emoji-item.selected {
+  transform: scale(1.2);
+  border: 3px solid #ffffff;
+  border-radius: 15px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.emoji-item:nth-child(1) { animation-delay: 0.1s; }
+.emoji-item:nth-child(2) { animation-delay: 0.2s; }
+.emoji-item:nth-child(3) { animation-delay: 0.3s; }
+.emoji-item:nth-child(4) { animation-delay: 0.4s; }
+.emoji-item:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.emoji-single {
+  font-size: 64px;
+  animation: fadeOut 2s ease forwards;
+}
+
+/*  Toast notification */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #1e1e1e;
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(30px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  z-index: 3000;
+}
+
+.toast.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* ✅ Responsividade para telas menores */
+@media (max-width: 500px) {
+  .emoji-box {
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .emoji-item img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .emoji-title {
+    font-size: 20px;
+  }
+
+  .emoji-item p {
+    font-size: 12px;
+  }
+}
+
+
+
+    @keyframes fadeOut {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.5); }
+    }
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      .sidebar {
+        flex-direction: row;
+        width: 100%;
+        height: 60px;
+        overflow-x: auto;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1001;
+        justify-content: space-around;
+      }
+      .sidebar.expanded {
+        height: 60px;
+        width: 100%;
+      }
+      .content {
+        margin-bottom: 70px;
+      }
+      .sidebar .fa-bars {
+        display: none;
+      }
+    }
+/* ======= CALENDÁRIO PRINCIPAL ======= */
+#dashboard-calendar {
+  margin-top: 30px;
+  padding: 25px;
+  border-radius: 20px;
+  background-color: rgba(118, 116, 116, 0.064);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transition: all 0.3s ease;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+
+@media (min-width: 1000px) {
+  #calendar td,
+  #calendar th {
+    padding: 40px;
+    font-size: 18px;
+    height: 80px;
+    width: 80px;
+  }
+}
+
+
+
+
+
+/* ======= CABEÇALHO DO CALENDÁRIO ======= */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.calendar-header button:hover {
+  transform: scale(1.1);
+}
+
+/* ======= TABELA DO CALENDÁRIO ======= */
+#calendar {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 14px;
+}
+
+#calendar th,
+#calendar td {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  transition: background 0.3s;
+  color: #fff;
+}
+
+#calendar th {
+  background-color: rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+#calendar td:hover {
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+/* ======= DESTAQUES ======= */
+.today {
+  background: #3498db;
+  font-weight: bold;
+  color: white;
+}
+
+td.active {
+  background-color: #4caf50;
+  color: white;
+  border-radius: 50%;
+}
+
+td.today {
+  border: 2px solid #2196f3;
+  border-radius: 50%;
+}
+
+
+/* ======= RESPONSIVO ======= */
+@media (max-width: 600px) {
+  #dashboard-calendar {
+    padding: 12px;
+    border-radius: 15px;
+  }
+
+  #calendar {
+    font-size: 12px;
+  }
+
+  #calendar td {
+    height: 90px;
+    width: 90px;
+    padding: 8px;
+    vertical-align: top;
+    text-align: left;
+    font-weight: 500;
+    position: relative;
+  }
+
+  
+
+
+  #calendar th {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  #calendar td {
+    height: 40px;
+  }
+}
+
+
+
+
+
+#calendar-notes {
+  margin-top: 25px;
+  padding: 130px;
+  border-radius: 15px;
+  background-color: rgba(255, 255, 255, 0.05); /* fundo semitransparente */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+
+
+
+
+
+
+
+    
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.theme-grid img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  cursor: pointer;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.theme-grid img:hover {
+  transform: scale(1.05);
+}
+
+.theme-carousel {
+  display: none;
+  overflow-x: auto;
+  white-space: nowrap;
+  gap: 12px;
+  padding: 10px 0;
+  scroll-snap-type: x mandatory;
+}
+
+.theme-carousel img {
+  display: inline-block;
+  width: 135px;
+  aspect-ratio: 9 / 16;
+  border-radius: 12px;
+  object-fit: cover;
+  object-position: center;
+  margin-right: 10px;
+  scroll-snap-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.theme-carousel img:hover {
+  transform: scale(1.05);
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+  .theme-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .theme-grid {
+    display: none;
+  }
+  .theme-carousel {
+    display: flex;
+  }
+}
+
+
+
+
+   
+.add-btn {
+  position: fixed;
+  bottom: 40px;
+  left: 0%;
+  width: 90px;
+  height: 90px;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: white;
+  font-size: 30px;
+  border-radius: 50%;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  z-index: 3000;
+  transition: all 0.3s ease;
+}
+.add-btn:hover {
+  background-color: #5b538b;
+  backdrop-filter: blur(12px); 
+}
+@media (max-width: 768px) {
+  .add-btn {
+    position: fixed;
+    bottom: 90px;
+    left: 90%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(16, 15, 15, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+}
+
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(24px);
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+}
+
+.overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.task-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  width: 90%;
+  max-width: 300px;
+  max-height:90%;
+  background: rgba(12, 11, 11, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  z-index: 1002;
+  padding: 20px;
+  border-radius: 20px;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow-y: auto;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.task-modal.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+
+/* Ajuste para telas pequenas */
+@media (max-width: 600px) {
+  .task-modal {
+    top: 40%;
+    transform: translate(-50%, -40%);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-body input,
+.modal-body textarea {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.category-btn {
+  background-color: #ccc;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+}
+
+/*  Alinha os ícones em linha */
+.icon-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Alinhamento interno de cada ícone */
+.icon-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+/* Estilo visual dos ícones */
+.icon-slot img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+
+.send-icon img {
+  width: 80px;
+  height: 80px;
+  padding: 10px;
+}
+
+
+
+
+.icon-slot img:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/*Paletas de cores*/
+
+.color-picker-modal {
+  position: absolute;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  background: rgb(255, 255, 255);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  color: white;
+  text-align: center;
+}
+
+.color-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.color-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.color-scroll::-webkit-scrollbar-thumb {
+  background: #000000;
+  border-radius: 5px;
+}
+
+.color-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.color-box:hover {
+  transform: scale(1.1);
+}
+
+/*Categoria*/
+.categoria-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.categoria-box {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  backdrop-filter: blur(12px);
+}
+
+.lista-categorias button {
+  display: block;
+  width: 100%;
+  margin: 6px 0;
+  padding: 10px;
+  background: #bbb;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#add-category-btn {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #6c5ce7;
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.salvar-btn {
+  margin-top: 15px;
+  background: #444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+#categoria-selecionada {
+  margin: 10px auto;
+  background: #bbb;
+  padding: 8px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: fit-content;
+  font-weight: bold;
+}
+
+
+
+
+
+/*Perfil do usuario*/
+
+/* ---------- GERAL ---------- */
+
+
+
+/* Container central flexível */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* ---------- PERFIL ---------- */
+
+.container-perfil.vidro-translucido {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+/* Imagem do perfil */
+.imagem-perfil {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Informações do perfil */
+.info-perfil label {
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
+}
+
+.info-perfil p {
+  margin: 2px 0 10px;
+}
+
+/* Botão editar perfil */
+.botao-editar {
+  margin-left: auto;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.3s ease;
+}
+
+.botao-editar:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+/* ---------- HISTÓRICO DE EMOJIS ---------- */
+
+.historico-emojis {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+/* Cartão com vidro e animação */
+.item-historico.botao-modal {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  flex: 1 1 150px;
+  max-width: 300px;
+  min-width: 140px;
+  text-align: center;
+}
+
+.item-historico.botao-modal:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.titulo-historico {
+  margin-bottom: 12px;
+  color: white;
+  font-size: 14px;
+}
+
+.caixa-historico {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.vidro-fosco {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(17, 34, 68, 0.4);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  z-index: 1;
+}
+
+.caixa-historico img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+/* ---------- MODAIS ---------- */
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-conteudo {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  color: #111;
+}
+
+.fechar {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #333;
+}
+
+.fechar:hover {
+  color: red;
+}
+
+.modal-conteudo input,
+.modal-conteudo button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+}
+
+/* ---------- RESPONSIVIDADE ---------- */
+
+@media (min-width: 992px) {
+  .container-perfil.vidro-translucido {
+    flex: 1 1 100%;
+    max-width: 100%;
+    padding: 40px;
+    gap: 40px;
+  }
+
+  .imagem-perfil {
+    width: 130px;
+    height: 130px;
+  }
+
+  .info-perfil label {
+    font-size: 18px;
+  }
+
+  .info-perfil p {
+    font-size: 16px;
+  }
+
+  .botao-editar {
+    font-size: 16px;
+    padding: 12px 30px;
+  }
+
+  .historico-emojis {
+    gap: 50px;
+    margin-top: 60px;
+  }
+
+  .item-historico.botao-modal {
+    min-width: 200px;
+    max-width: 300px;
+  }
+
+  .titulo-historico {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 500px) {
+  .botao-editar {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .imagem-perfil {
+    margin: 0 auto;
+  }
+
+  .container-perfil.vidro-translucido {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+
+container-principal {
+  margin: 60px auto 20px;
+  padding: 40px 30px;
+  background: rgba(0, 20, 50, 0.4);
+  border-radius: 25px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+  text-align: center;
+  max-width: 700px;
+  width: 90%;
+}
+
+/* Título principal */
+.container-principal h2 {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #ffffff;
+}
+
+/* Reunião ou aviso */
+.tarefa {
+  background: rgba(0, 0, 0, 0.25);
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 18px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Ícone da tarefa */
+.tarefa .icone {
+  font-size: 22px;
+  color: #ff4d4d;
+}
+
+/* Mensagem sem tarefas */
+.sem-tarefas {
+  font-style: italic;
+  color: #ccc;
+  font-size: 17px;
+  margin-top: 20px;
+}
+
+/* Contêiner dos status */
+.status-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 40px;
+}
+
+/* Blocos de status (concluídos/pendentes) */
+.status-box {
+  flex: 1;
+  max-width: 180px;
+  min-height: 120px;
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+/* Animação ao passar o mouse */
+.status-box:hover {
+  transform: scale(1.05);
+}
+
+/* Estilos específicos */
+.status-concluido {
+  border: 2px solid #1eff8b;
+  color: #1eff8b;
+}
+
+.status-pendente {
+  border: 2px solid #ff4d4d;
+  color: #ff4d4d;
+}
+
+/* Números dentro dos status */
+.status-box .numero {
+  font-size: 28px;
+  margin-top: 10px;
+}
+
+
+
+
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <i class="fas fa-bars" onclick="toggleMenu()"></i>
+    <i class="fas fa-home" onclick="showContent('home')"><span class="label">Início</span></i>
+    <i class="fas fa-user" onclick="showContent('profile')"><span class="label">Perfil</span></i>
+    <i class="fas fa-calendar" onclick="showContent('dashboard')"><span class="label">Calendário</span></i>
+    <i class="fas fa-image" onclick="showContent('temas')"><span class="label">Temas</span></i>
+  </div>
+
+  <div class="content">
+ 
+    
+
+    <div id="home"> <h1>Bem-vindo!</h1> 
+      
+      <div class="floating-bar">
+        <div class="login-circle">
+          <a href="login.html">
+            <i class="fas fa-user"></i>
+          </a>
+        </div>
+
+        
+        <span id="greeting">Bom dia, Othavio! Vamos ser produtivo?</span>
+        <div id="emojiReactionContainer">
+          <button onclick="showEmojis()" id="reactionBtn">Reagir</button>
+        </div>
+
+
+
+        
+      </div>
+      
+      
+      
+ <div class="container-principal">
+  <h2>Para hoje</h2>
+
+  <div class="tarefa">
+    <span class="icone">🎯</span>
+    Reunião às 10 h
+  </div>
+
+  <p class="sem-tarefas">Sem tarefas por enquanto...</p>
+</div>
+
+<div class="status-container">
+  <div class="status-box status-concluido">
+    CONCLUÍDOS
+    <div class="numero">0</div>
+  </div>
+  <div class="status-box status-pendente">
+    PENDENTES
+    <div class="numero">0</div>
+  </div>
+</div>
+
+    </div>
+    <div id="profile" style="display:none"> <h1>Perfil</h1>
+    
+  <!-- Container principal para centralizar e expandir em telas grandes -->
+<div class="container">
+
+  <!-- Perfil do Querido -->
+  <div class="container-perfil vidro-translucido">
+    <img src="img/user.png" alt="Foto do Cliente" class="imagem-perfil">
+
+    <div class="info-perfil">
+      <label>Nome:</label>
+      <p>Ice Spice Pereira</p>
+
+      <label>E-mail:</label>
+      <p>icespicepereira@gmail.com</p>
+
+      <label>Senha:</label>
+      <p>**************</p>
+    </div>
+
+    <button class="botao-editar" onclick="editarPerfil()">Editar</button>
+  </div>
+
+  <!-- Histórico de Emojis -->
+  <div class="historico-emojis">
+    <!-- Botão 1 -->
+    <div class="item-historico botao-modal" id="abrirModal1">
+      <h4 class="titulo-historico">Histórico de Emojis</h4>
+      <div class="caixa-historico">
+        <img src="img/img emoji/historicodeemoji.png" alt="Histórico 1" class="imagem-historico">
+        <div class="vidro-fosco"></div>
+      </div>
+    </div>
+
+    <!-- Botão 2 -->
+    <div class="item-historico botao-modal" id="abrirModal2">
+      <h4 class="titulo-historico">Histórico de Emojis</h4>
+      <div class="caixa-historico">
+        <img src="img/img emoji/historicodeemoji.png" alt="Histórico 2" class="imagem-historico">
+        <div class="vidro-fosco"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Histórico -->
+<div id="modal" class="modal">
+  <div class="modal-conteudo">
+    <span class="fechar" id="fecharModal">&times;</span>
+    <h2>Histórico de Emojis</h2>
+    <p>Aqui você verá detalhes ou informações do histórico.</p>
+  </div>
+</div>
+
+<!-- Modal de Edição -->
+<div id="modal-editar" class="modal">
+  <div class="modal-conteudo">
+    <span class="fechar" onclick="fecharModal()">&times;</span>
+    <h2>Editar Perfil</h2>
+    <form id="form-editar">
+      <label for="editar-nome">Nome:</label>
+      <input type="text" id="editar-nome" required>
+
+      <label for="editar-email">E-mail:</label>
+      <input type="email" id="editar-email" required>
+
+      <label for="editar-senha">Senha:</label>
+      <input type="password" id="editar-senha" required>
+
+      <button type="submit">Salvar</button>
+    </form>
+  </div>
+</div>
+
+
+
+
+  
+    
+    </div>
+
+
+
+
+    <div id="dashboard" style="display:none">
+      <button class="add-btn" onclick="openModal()">+</button>
+    
+      <h1>Calendário</h1>
+
+      <div class="floating-bar">
+        <div class="login-circle">
+          <a href="login.html">
+            <i class="fas fa-user"></i>
+          </a>
+        </div>
+        <span id="greeting">Bom dia, Othavio! Vamos ser produtivo?</span>
+        <div id="emojiReactionContainer">
+          <button onclick="showEmojis()" id="reactionBtn">Reagir</button>
+        </div>
+      </div>
+    
+      <div id="dashboard-calendar">
+        <div class="calendar-header">
+          <button id="prev-month">&#8592;</button>
+          <span id="month-year"></span>
+          <button id="next-month">&#8594;</button>
+        </div>
+    
+        <table id="calendar">
+          <thead>
+            <tr>
+              <th>Dom</th>
+              <th>Seg</th>
+              <th>Ter</th>
+              <th>Qua</th>
+              <th>Qui</th>
+              <th>Sex</th>
+              <th>Sáb</th>
+            </tr>
+          </thead>
+          <tbody id="calendar-body">
+            <!-- Dias serão inseridos via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    
+      <div id="calendar-notes">
+        <p></p>
+      </div>
+    
+      <!-- Overlay para desfoque de fundo -->
+      <div id="overlay" class="overlay" onclick="closeModal()"></div>
+    
+      <!-- Modal lateral para adicionar tarefas -->
+  <!-- Modal central para adicionar tarefas -->
+  <div id="task-modal" class="task-modal">
+    <div class="modal-header">
+      <h2>Adicionar Tarefas</h2>
+      <button onclick="closeModal()">✕</button>
+    </div>
+  
+    <div class="modal-body">
+      <label for="task-title">TÍTULO</label>
+      <input id="task-title" type="text" placeholder="Nome da tarefa" />
+  
+      <label for="task-desc">DESCRIÇÃO</label>
+      <textarea id="task-desc" placeholder="Descrição..."></textarea>
+  
+      <div class="modal-footer">
+        <button class="category-btn">CATEGORIA</button>
+        <!-- Modal de Categoria -->
+<div id="categoria-modal" class="categoria-modal" style="display: none;">
+  <div class="categoria-box">
+    <h3>CATEGORIA</h3>
+    <div id="lista-categorias" class="lista-categorias">
+      <!-- Categorias adicionadas via JS -->
+    </div>
+    <div class="category-footer">
+  
+  <button id="add-category-btn">+</button>
+</div>
+
+  </div>
+</div>
+
+<!-- Botão visível com nome da categoria -->
+<div id="categoria-selecionada" class="categoria-selecionada" onclick="abrirCategoriaModal()">
+  Categoria
+</div>
+
+        
+        <div class="icon-row">
+          <div class="icon-slot"><img src="img/icone relogio.png" alt="Relógio" /></div>
+          <div class="icon-slot"><img src="img/icone paleta de cor.png" alt="Cores" /></div>
+          <div id="color-picker-modal" class="color-picker-modal" style="display: none;">
+  <h3>Escolher cor</h3>
+  <div class="color-scroll">
+    <div class="color-box" style="background-color: red;"></div>
+    <div class="color-box" style="background-color: gold;"></div>
+    <div class="color-box" style="background-color: green;"></div>
+    <div class="color-box" style="background-color: royalblue;"></div>
+    <div class="color-box" style="background-color: black;"></div>
+    <div class="color-box" style="background-color: white; border: 1px solid #ccc;"></div>
+    <div class="color-box" style="background-color: hotpink;"></div>
+    <div class="color-box" style="background-color: blueviolet;"></div>
+    <div class="color-box" style="background-color: orange;"></div>
+    <div class="color-box" style="background-color: cyan;"></div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <div class="icon-slot"><img src="img/icone galeria.png" alt="Imagem" /></div>
+          <div class="icon-slot send-icon"><img src="img/image-Photoroom (2).png" alt="Salvar" /></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+    </div>
+    
+    
+
+   
+    
+
+
+
+    <div id="temas" style="display:none">
+      <h1>Temas</h1>
+    
+      <!-- Categoria: Cidades -->
+      <h2>Cidades</h2>
+      <div class="theme-grid">
+        <img src="img/temas/background.png.png" onclick="confirmTheme(this.src)">
+        <img src="img/temas/cyberpunk blue.png" onclick="confirmTheme(this.src)">
+        <img src="img/temas/noite azul.png" onclick="confirmTheme(this.src)">
+      </div>
+      <div class="theme-carousel">
+        <img src="img/temas/background.png.png" onclick="confirmTheme(this.src)">
+        <img src="img/temas/noite azul.png" onclick="confirmTheme(this.src)">
+        <img src="img/temas/cyberpunk blue.png" onclick="confirmTheme(this.src)">
+      </div>
+    
+      <!-- Categoria: Carros -->
+      <h2>Carros</h2>
+      <div class="theme-grid">
+        <img src="img/temas/carros/1.jpg" onclick="confirmTheme(this.src)">
+        <img src="img/temas/carros/2.jpg" onclick="confirmTheme(this.src)">
+        <img src="img/temas/carros/3.jpg" onclick="confirmTheme(this.src)">
+      </div>
+      <div class="theme-carousel">
+        <img src="img/temas/carros/1.jpg" onclick="confirmTheme(this.src)">
+        <img src="img/temas/carros/2.jpg" onclick="confirmTheme(this.src)">
+        <img src="img/temas/carros/3.jpg" onclick="confirmTheme(this.src)">
+      </div>
+    
+      <!-- Categoria: Paisagens -->
+      <h2>Paisagens</h2>
+      <div class="theme-grid">
+        <img src="img/temas/paisagens/1.jpg" onclick="confirmTheme(this.src)">
+        <img src="img/temas/paisagens/2.jpg" onclick="confirmTheme(this.src)">
+        <img src="img/temas/paisagens/3.jpg" onclick="confirmTheme(this.src)">
+      </div>
+      <div class="theme-carousel">
+        <img src="img/temas/paisagens/1.jpg" onclick="confirmTheme(this.src)">
+        <img src="img/temas/paisagens/2.jpg" onclick="confirmTheme(this.src)">
+        <img src="img/temas/paisagens/3.jpg" onclick="confirmTheme(this.src)">
+      </div>
+    </div>
+    
+    
+    
+    
+
+
+
+  </div>
+
+  <div class="emoji-overlay" id="emojiOverlay">
+    <h2 class="emoji-title">COMO VOCÊ ESTÁ SE SENTINDO HOJE?</h2>
+    <div class="emoji-box">
+      <div class="emoji-item" data-emotion="feliz" onclick="selectEmoji('feliz')">
+        <img src="img/img emoji/emoji feliz.png" alt="Feliz">
+        <p>FELIZ</p>
+      </div>
+      <div class="emoji-item" data-emotion="triste" onclick="selectEmoji('triste')">
+        <img src="img/img emoji/emoji tristeza.png" alt="Triste">
+        <p>TRISTE</p>
+      </div>
+      <div class="emoji-item" data-emotion="irritado" onclick="selectEmoji('irritado')">
+        <img src="img/img emoji/emoji raiva.png" alt="Irritado">
+        <p>IRRITADO</p>
+      </div>
+      <div class="emoji-item" data-emotion="cansado" onclick="selectEmoji('cansado')">
+        <img src="img/img emoji/emoji cansaço.png" alt="Cansado">
+        <p>CANSADO</p>
+      </div>
+      <div class="emoji-item" data-emotion="motivado" onclick="selectEmoji('motivado')">
+        <img src="img/img emoji/emoji motivado.png" alt="Motivado">
+        <p>MOTIVADO</p>
+      </div>
+    </div>
+  </div>
+  
+  
+  <div id="toast" class="toast">Você já escolheu um emoji hoje!</div>
+
+
+
+
+
+
+  
+  <div class="theme-modal-overlay" id="themeModal">
+    <div class="theme-modal">
+      <h3>Você deseja mesmo adicionar essa foto no papel de parede?</h3>
+      <button onclick="applyTheme()">Sim</button>
+      <button onclick="closeThemeModal()">Não</button>
+    </div>
+  </div>
+
+
+
+
+  <<script>
+ 
+    // ====================== VARIÁVEIS GLOBAIS ======================
+    let hasReacted = false;
+    let selectedTheme = "";
+  
+    // ====================== MAPEAMENTO DE EMOJIS (IMAGENS) ======================
+    const emojiMap = {
+      feliz: "img/img emoji/emoji feliz.png",
+      triste: "img/img emoji/emoji tristeza.png",
+      cansado: "img/img emoji/emoji cansaço.png",
+      irritado: "img/img emoji/emoji raiva.png",
+      motivado: "img/img emoji/emoji motivado.png"
+    };
+  
+    // ====================== TOGGLE DO MENU LATERAL ======================
+    function toggleMenu() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('expanded');
+    }
+  
+    // ====================== EXIBIÇÃO DE CONTEÚDO POR ID ======================
+    function showContent(id) {
+      const sections = ['home', 'profile', 'dashboard', 'temas'];
+      sections.forEach(sec => document.getElementById(sec).style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+      if (id === 'dashboard') renderCalendar();
+    }
+  
+    // ====================== MODAL DE EMOJIS ======================
+    document.addEventListener("DOMContentLoaded", () => {
+      showEmojiOverlay(); // Sempre mostra o modal no carregamento
+      const savedEmoji = localStorage.getItem("selectedEmoji");
+      if (savedEmoji) {
+        highlightEmoji(savedEmoji);
+        updateEmojiReaction(savedEmoji);
+      }
+    });
+  
+    function showEmojis() {
+      const overlay = document.getElementById("emojiOverlay");
+      overlay.style.display = "flex";
+      const savedEmoji = localStorage.getItem("selectedEmoji");
+      if (savedEmoji) highlightEmoji(savedEmoji);
+    }
+  
+    function selectEmoji(emotion) {
+      const today = new Date().toLocaleDateString();
+      localStorage.setItem("emojiShownDate", today);
+      localStorage.setItem("selectedEmoji", emotion);
+  
+      highlightEmoji(emotion);
+      updateEmojiReaction(emotion);
+  
+      setTimeout(() => {
+        document.getElementById("emojiOverlay").style.display = "none";
+      }, 500);
+    }
+  
+    function highlightEmoji(emotion) {
+      document.querySelectorAll('.emoji-item').forEach(el => el.classList.remove("selected"));
+      const selected = document.querySelector(`.emoji-item[data-emotion="${emotion}"]`);
+      if (selected) selected.classList.add("selected");
+    }
+  
+    function showEmojiOverlay() {
+      const overlay = document.getElementById("emojiOverlay");
+      overlay.style.display = "flex";
+    }
+  
+    // ====================== MOSTRAR EMOJI NA BARRA ======================
+    function updateEmojiReaction(emotion) {
+      const emojiContainer = document.getElementById("emojiReactionContainer");
+      const emojiImg = emojiMap[emotion];
+  
+      if (emojiImg && emojiContainer) {
+        emojiContainer.innerHTML = `
+  <div class="emoji-circle" onclick="showEmojis()">
+    <img src="${emojiImg}" alt="${emotion}" />
+  </div>
+`;
+      }
+    }
+  
+    // ====================== FECHAR MODAL AO CLICAR FORA ======================
+    document.addEventListener("click", function (event) {
+      const overlay = document.getElementById("emojiOverlay");
+      const emojiBox = document.querySelector(".emoji-box");
+  
+      if (
+        overlay.style.display === "flex" &&
+        !emojiBox.contains(event.target) &&
+        !event.target.closest("#reactionBtn") &&
+        !event.target.closest(".emoji-circle")
+      ) {
+        overlay.style.display = "none";
+      }
+    });
+  
+  
+  
+
+
+const paletteIcon = document.querySelector('.icon-slot img[alt="Cores"]');
+const colorPickerModal = document.getElementById('color-picker-modal');
+const colorBoxes = document.querySelectorAll('.color-box');
+
+// Alternar a exibição ao clicar no ícone
+paletteIcon.addEventListener('click', (e) => {
+  e.stopPropagation(); // Evita que o clique feche imediatamente
+  const isVisible = colorPickerModal.style.display === 'block';
+  colorPickerModal.style.display = isVisible ? 'none' : 'block';
+});
+
+// Clicar fora do modal fecha
+document.addEventListener('click', (e) => {
+  const isClickInside = colorPickerModal.contains(e.target) || paletteIcon.contains(e.target);
+  if (!isClickInside) {
+    colorPickerModal.style.display = 'none';
+  }
+});
+
+// Pressionar ESC fecha o seletor
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    colorPickerModal.style.display = 'none';
+  }
+});
+
+// Selecionar cor e fechar o seletor
+colorBoxes.forEach(box => {
+  box.addEventListener('click', () => {
+    const selectedColor = box.style.backgroundColor;
+    document.getElementById('task-modal').style.borderTop = `6px solid ${selectedColor}`;
+    colorPickerModal.style.display = 'none';
+  });
+});
+
+
+/*Categoria no adicionar tarefas*/
+let categorias = ["Trabalho", "Saude", "Viagem", "Escola"];
+let categoriaSelecionada = null;
+
+// Exibir modal
+function abrirCategoriaModal() {
+  document.getElementById("categoria-modal").style.display = "flex";
+  atualizarListaCategorias();
+}
+
+// Fechar modal
+function fecharCategoriaModal() {
+  document.getElementById("categoria-modal").style.display = "none";
+}
+
+// Atualiza a lista de botões
+function atualizarListaCategorias() {
+  const lista = document.getElementById("lista-categorias");
+  lista.innerHTML = "";
+  categorias.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.textContent = cat;
+    btn.onclick = () => {
+      categoriaSelecionada = cat;
+      document.getElementById("categoria-selecionada").textContent = cat;
+      fecharCategoriaModal();
+    };
+    lista.appendChild(btn);
+  });
+}
+
+// Criar nova categoria
+document.getElementById("add-category-btn").addEventListener("click", () => {
+  const nova = prompt("Nome da nova categoria:");
+  if (nova && !categorias.includes(nova)) {
+    categorias.push(nova);
+    atualizarListaCategorias();
+  }
+});
+
+
+
+
+
+
+    
+
+  // ====================== SAUDAÇÃO COM BASE NA HORA ======================
+  const hour = new Date().getHours();
+  const greeting = document.getElementById('greeting');
+  if (hour < 12) greeting.innerText = 'Bom dia, Othavio! Como você está se sentindo hoje?';
+  else if (hour < 18) greeting.innerText = 'Boa tarde, Othavio! Como você está se sentindo hoje?';
+  else greeting.innerText = 'Boa noite, Othavio! Como você está se sentindo hoje?';
+
+  // ====================== MODAL DE TAREFAS ======================
+  function openModal() {
+    document.getElementById('task-modal').classList.add('open');
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('task-modal').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  // ====================== CALENDÁRIO ======================
+  let currentDate = new Date();
+  let currentMonth = currentDate.getMonth();
+  let currentYear = currentDate.getFullYear();
+
+  function renderCalendar() {
+    const monthYearElem = document.getElementById('month-year');
+    const calendarBody = document.getElementById('calendar-body');
+    
+    monthYearElem.innerText = `${getMonthName(currentMonth)} ${currentYear}`;
+
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+    calendarBody.innerHTML = '';
+
+    let row = document.createElement('tr');
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      row.appendChild(document.createElement('td'));
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const cell = document.createElement('td');
+      cell.textContent = day;
+      cell.setAttribute('data-day', day);
+
+      const today = new Date();
+      if (
+        day === today.getDate() &&
+        currentMonth === today.getMonth() &&
+        currentYear === today.getFullYear()
+      ) {
+        cell.classList.add('today');
+      }
+
+      row.appendChild(cell);
+
+      if (row.children.length === 7) {
+        calendarBody.appendChild(row);
+        row = document.createElement('tr');
+      }
+    }
+
+    if (row.children.length > 0) {
+      calendarBody.appendChild(row);
+    }
+
+    const allDays = calendarBody.querySelectorAll('td[data-day]');
+    allDays.forEach(dayCell => {
+      dayCell.addEventListener('click', () => {
+        allDays.forEach(cell => cell.classList.remove('active'));
+        dayCell.classList.add('active');
+      });
+    });
+  }
+
+  function getMonthName(monthIndex) {
+    const months = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+    return months[monthIndex];
+  }
+
+  document.getElementById('prev-month').addEventListener('click', () => {
+    changeMonth(-1);
+  });
+
+  document.getElementById('next-month').addEventListener('click', () => {
+    changeMonth(1);
+  });
+
+  function changeMonth(offset) {
+    currentMonth += offset;
+
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    } else if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+
+    renderCalendar();
+  }
+
+  renderCalendar();
+
+  // ====================== APLICAÇÃO DE TEMA ======================
+  function confirmTheme(src) {
+    selectedTheme = src;
+    document.getElementById('themeModal').style.display = 'flex';
+  }
+
+  function closeThemeModal() {
+    document.getElementById('themeModal').style.display = 'none';
+  }
+
+  function applyTheme() {
+    document.body.style.backgroundImage = `url(${selectedTheme})`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.getElementById('themeModal').style.display = 'none';
+  }
+
+
+
+
+
+
+
+  // Seleciona os botões que abrem o modal
+  const botao1 = document.getElementById("abrirModal1");
+  const botao2 = document.getElementById("abrirModal2");
+
+  // Seleciona o modal e o botão de fechar
+  const modal = document.getElementById("modal");
+  const fechar = document.getElementById("fecharModal");
+
+  // Função para abrir o modal
+  function abrirModal() {
+    modal.style.display = "flex";
+  }
+
+  // Função para fechar o modal
+  function fecharModal() {
+    modal.style.display = "none";
+  }
+
+  // Eventos para abrir o modal ao clicar nos botões
+  botao1.addEventListener("click", abrirModal);
+  botao2.addEventListener("click", abrirModal);
+
+  // Evento para fechar o modal ao clicar no "×"
+  fechar.addEventListener("click", fecharModal);
+
+  // Fecha o modal ao clicar fora do conteúdo
+  window.addEventListener("click", function (e) {
+    if (e.target === modal) {
+      fecharModal();
+    }
+  });
+
+
+
+
+
+
+</script>
+
+  
+    
+   
+    
+
+</body>
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login / Cadastro - PlaneX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: url('img/Plane.png') no-repeat center center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      padding: 40px 30px;
+      width: 350px;
+      color: white;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    }
+
+    .container h2 {
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      position: relative;
+      margin: 15px 0;
+    }
+
+    .input-group i {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: #ddd;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px 12px 12px 38px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .input-group input::placeholder {
+      color: #ddd;
+    }
+
+    .container button {
+      margin-top: 20px;
+      padding: 12Ppx;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #000000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .container button:hover {
+      background-color: #eee;
+    }
+
+    .footer {
+      margin-top: 15px;
+      font-size: 0.9em;
+    }
+
+    .footer a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .forgot {
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+
+    .forgot a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: normal;
+    }
+
+    .forgot a:hover {
+      text-decoration: underline;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+
+
+    .error-msg {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+  }
+  .password-group {
+    position: relative;
+  }
+  .toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-group input {
+  width: 100%;
+  padding-right: 10px; 
+  padding-left: 30px;  
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.input-group i.fas.fa-lock {
+  position: absolute;
+  left: 10px;
+  color: #aaa;
+}
+
+.input-group .toggle-password {
+  position: absolute;
+  left: 260px;
+  color: #888;
+  cursor: pointer;
+}
+
+#username-group {
+  display: none;
+}
+
+
+
+
+
+
+.profile-container {
+  position: absolute;
+  top: -90px; 
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.profile-pic-wrapper {
+  width: 120px; 
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.profile-pic-wrapper img {
+  width: 100%;
+  height: 190%;
+  object-fit: cover; 
+  display: block;
+}
+
+
+
+
+
+
+.container-principal {
+  margin: 60px auto 20px;
+  padding: 40px 30px;
+  background: rgba(0, 20, 50, 0.4);
+  border-radius: 25px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+  text-align: center;
+  max-width: 700px;
+  width: 90%;
+}
+
+/* Título principal */
+.container-principal h2 {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #ffffff;
+}
+
+/* Reunião ou aviso */
+.tarefa {
+  background: rgba(0, 0, 0, 0.25);
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 18px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Ícone da tarefa */
+.tarefa .icone {
+  font-size: 22px;
+  color: #ff4d4d;
+}
+
+/* Mensagem sem tarefas */
+.sem-tarefas {
+  font-style: italic;
+  color: #ccc;
+  font-size: 17px;
+  margin-top: 20px;
+}
+
+/* Contêiner dos status */
+.status-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 40px;
+}
+
+/* Blocos de status (concluídos/pendentes) */
+.status-box {
+  flex: 1;
+  max-width: 180px;
+  min-height: 120px;
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+/* Animação ao passar o mouse */
+.status-box:hover {
+  transform: scale(1.05);
+}
+
+/* Estilos específicos */
+.status-concluido {
+  border: 2px solid #1eff8b;
+  color: #1eff8b;
+}
+
+.status-pendente {
+  border: 2px solid #ff4d4d;
+  color: #ff4d4d;
+}
+
+/* Números dentro dos status */
+.status-box .numero {
+  font-size: 28px;
+  margin-top: 10px;
+}
+
+
+
+  </style>
+  <!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
+
+</head>
+<body>
+
+
+
+
+
+
+
+  <div class="container">
+
+
+  <div class="profile-container">
+  <label for="profile-upload">
+    <div class="profile-pic-wrapper">
+      <img id="profile-pic" src="img/img-login/iconedeusuario.png" alt="Foto de perfil">
+    </div>
+  </label>
+  <input type="file" id="profile-upload" accept="image/*" style="display: none;">
+</div>
+
+
+
+
+    <h2 id="form-title">Entrar</h2>
+  
+    <!-- Nome de usuário (apenas para cadastro) -->
+    <div id="username-group" class="input-group">
+      <i class="fas fa-user"></i>
+      <input type="text" id="username" placeholder="Nome de usuário">
+    </div>
+    <small id="username-error" class="error-msg"></small>
+    
+    
+  
+    <!-- E-mail (sempre visível) -->
+    <div class="input-group">
+      <i class="fas fa-envelope"></i>
+      <input type="email" id="email" placeholder="E-mail">
+    </div>
+    <small id="email-error" class="error-msg"></small>
+  
+    <!-- Senha -->
+    <div class="input-group">
+      <i class="fas fa-lock"></i>
+      <input type="password" id="password" placeholder="Senha">
+      <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+    </div>
+    <small id="password-error" class="error-msg"></small>
+  
+    <button onclick="handleAction()">Entrar</button>
+  
+
+
+    <div class="forgot">
+      <a href="#">Esqueci minha senha</a>
+    </div>
+  
+    <div class="footer">
+      <span id="toggle-text">Não tem uma conta? </span>
+      <a onclick="toggleForm()">Cadastrar</a>
+    </div>
+  </div>
+  
+  
+  
+
+  <script type="module">
+    // Firebase config
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyA90elOZbg0ASt_AE_zNCAg_41jmfCNtxo",
+      authDomain: "planex-93994.firebaseapp.com",
+      projectId: "planex-93994",
+      storageBucket: "planex-93994.firebasestorage.app",
+      messagingSenderId: "909835593541",
+      appId: "1:909835593541:web:208a60d8f79b60b357402c",
+      measurementId: "G-DE98FRTPK7"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let isLogin = true;
+
+function toggleForm() {
+  isLogin = !isLogin;
+  document.getElementById('form-title').innerText = isLogin ? 'Entrar' : 'Cadastrar';
+  document.querySelector('button').innerText = isLogin ? 'Entrar' : 'Cadastrar';
+  document.getElementById('toggle-text').innerText = isLogin ? 'Não tem uma conta? ' : 'Já tem uma conta? ';
+
+  // Mostrar nome apenas no cadastro
+  document.getElementById('username-group').style.display = isLogin ? 'none' : 'block';
+}
+
+window.toggleForm = toggleForm;
+
+// Mostrar/ocultar senha
+function togglePassword() {
+  const input = document.getElementById("password");
+  input.type = input.type === "password" ? "text" : "password";
+}
+
+window.togglePassword = togglePassword;
+
+// Lidar com login/cadastro
+async function handleAction() {
+  clearErrors();
+
+  const username = document.getElementById("username")?.value.trim();
+  const password = document.getElementById("password").value;
+  const email = document.getElementById("email").value.trim();
+
+  let hasError = false;
+
+  if (!email || !email.includes("@")) {
+    showError("email-error", "E-mail inválido.");
+    hasError = true;
+  }
+
+  if (!password || password.length < 6) {
+    showError("password-error", "Senha deve ter pelo menos 6 caracteres.");
+    hasError = true;
+  }
+
+  if (!isLogin && !username) {
+    showError("username-error", "Nome de usuário é obrigatório.");
+    hasError = true;
+  }
+
+  if (hasError) return;
+
+  try {
+    if (isLogin) {
+      await signInWithEmailAndPassword(auth, email, password);
+      window.location.href = "index.html";
+    } else {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        username: username,
+        email: email,
+        createdAt: new Date()
+      });
+
+      window.location.href = "introducao.html";
+
+    }
+  } catch (error) {
+    const msg = isLogin
+      ? "E-mail ou senha inválidos."
+      : traduzirErroFirebase(error.code);
+    showError("email-error", msg);
+  }
+}
+
+window.handleAction = handleAction;
+
+// Exibir erros
+function showError(id, message) {
+  const element = document.getElementById(id);
+  if (element) element.innerText = message;
+}
+
+// Limpar erros
+function clearErrors() {
+  showError("username-error", "");
+  showError("password-error", "");
+  showError("email-error", "");
+}
+
+// Tradução segura de erros do Firebase
+function traduzirErroFirebase(code) {
+  switch (code) {
+    case "auth/email-already-in-use":
+      return "Não foi possível cadastrar. Tente outro e-mail.";
+    case "auth/weak-password":
+      return "A senha precisa ter pelo menos 6 caracteres.";
+    default:
+      return "Não foi possível concluir a ação. Tente novamente.";
+  }
+}
+
+
+
+
+
+
+
+
+
+
+const profilePic = document.getElementById('profile-pic');
+const profileUpload = document.getElementById('profile-upload');
+
+profileUpload.addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  
+  if (file) {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      profilePic.src = e.target.result;
+    };
+    
+    reader.readAsDataURL(file);
+  }
+});
+
+
+
+
+
+
+
+
+  </script>
+  
+  
+  
+</body>
+</html>

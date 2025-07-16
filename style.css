@@ -1,0 +1,209 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: sans-serif;
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #0a0f2c, #0a1a3c);
+    overflow-x: hidden;
+    color: white;
+  }
+  
+  .sidebar {
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    width: 60px;
+    transition: width 0.3s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-x: hidden;
+    z-index: 10;
+  }
+  
+  .sidebar.expanded {
+    width: 220px;
+  }
+  
+  .sidebar .toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 10px;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .sidebar ul li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+    border-radius: 8px;
+  }
+  
+  .sidebar ul li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .sidebar ul li span {
+    display: none;
+  }
+  
+  .sidebar.expanded ul li span {
+    display: inline;
+  }
+  
+  main {
+    margin-left: 60px;
+    padding: 20px;
+    flex: 1;
+    transition: margin-left 0.3s;
+  }
+  
+  .sidebar.expanded ~ main {
+    margin-left: 220px;
+  }
+  
+  section {
+    margin-bottom: 50px;
+  }
+  
+  /* Top greeting */
+  .top-greeting {
+    position: fixed;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    padding: 10px 20px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 20;
+  }
+  
+  #reactBtn {
+    background: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  /* Emoji Overlay */
+  .emoji-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    justify-content: center;
+    align-items: center;
+    z-index: 30;
+  }
+  
+  .emoji-overlay.active {
+    display: flex;
+  }
+  
+  .emoji-options {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px 30px;
+    border-radius: 16px;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .emoji {
+    font-size: 32px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .emoji:hover {
+    transform: scale(1.2);
+  }
+  
+  /* Emoji popup */
+  .emoji-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 60px;
+    z-index: 40;
+    display: none;
+    animation: fadeout 2s forwards;
+  }
+  
+  /* Mobile styles */
+  @media (max-width: 768px) {
+    .sidebar {
+      flex-direction: row;
+      width: 100%;
+      height: 60px;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  
+    .sidebar ul {
+      flex-direction: row;
+      white-space: nowrap;
+      padding: 0 10px;
+    }
+  
+    .sidebar ul li {
+      flex-direction: column;
+      justify-content: center;
+    }
+  
+    .sidebar ul li span {
+      display: none !important;
+    }
+  
+    .sidebar.expanded {
+      height: auto;
+      width: 100%;
+    }
+  
+    main {
+      margin-left: 0;
+      margin-top: 80px;
+    }
+  
+    .sidebar.expanded ~ main {
+      margin-left: 0;
+    }
+  }
+  
+  @keyframes fadeout {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      display: none;
+    }
+  }
+  

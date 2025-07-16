@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bem-vindo!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+  background-image: url("img/temas/noite azul.png");
+      overflow: hidden;
+    }
+
+    .slide-container {
+      display: flex;
+      width: 300%;
+      height: 100vh;
+      transition: transform 1s ease-in-out;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.05);
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    .slide h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .slide p {
+      font-size: 1rem;
+      max-width: 600px;
+    }
+
+    .nav-buttons {
+      position: absolute;
+      bottom: 30px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .nav-buttons button {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .nav-buttons button:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .task-slide input, .task-slide button {
+      margin-top: 15px;
+      padding: 10px;
+      width: 300px;
+      border-radius: 30px;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      background: transparent;
+      color: white;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .task-slide input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .task-slide input:focus {
+      border-color: #fff;
+    }
+
+    .task-slide button {
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="slide-container" id="slides">
+    <div class="slide">
+      <h2>Bem-vindo ao seu novo espaço produtivo!</h2>
+      <p>Aqui você poderá organizar suas tarefas com estilo, cores e personalização.</p>
+    </div>
+    <div class="slide">
+      <h2>Personalize sua experiência</h2>
+      <p>Escolha categorias, emojis, horários e muito mais com total liberdade.</p>
+    </div>
+    <div class="slide task-slide">
+      <h2>Vamos começar!</h2>
+      <p>Adicione sua primeira tarefa e comece a produtividade.</p>
+      <input type="text" placeholder="Estudar para a prova...">
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <input type="text" placeholder="Data" style="width: 140px;">
+        <input type="text" placeholder="Hora" style="width: 140px;">
+      </div>
+      <button onclick="finalizarIntroducao()">ADICIONAR</button>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button onclick="mudarSlide(-1)">&#8592;</button>
+    <button onclick="mudarSlide(1)">&#8594;</button>
+  </div>
+
+  <script>
+    let index = 0;
+    const slides = document.getElementById("slides");
+
+    function mudarSlide(direcao) {
+      index += direcao;
+      if (index < 0) index = 0;
+      if (index > 2) index = 2;
+      slides.style.transform = `translateX(-${index * 100}vw)`;
+    }
+
+    function finalizarIntroducao() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
